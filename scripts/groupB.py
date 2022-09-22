@@ -189,6 +189,6 @@ base = alt.Chart(df_group).encode(
 )
 
 
-alt.vconcat(g1, g5)|alt.vconcat(g9, g9)
+alt.vconcat(g1, g5)|alt.vconcat(g6, g9)
 
 
