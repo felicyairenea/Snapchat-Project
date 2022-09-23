@@ -1,0 +1,9 @@
+html {
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+    background-color:rgba(247, 248, 248, 0.918); 
+    color : rgba(0, 0, 0, 0.952);
+}

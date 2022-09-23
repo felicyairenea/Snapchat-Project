@@ -3,7 +3,7 @@ import pandas as pd
 import altair as alt
 from pyodide.http import open_url
 
-alt.renderers.set_embed_options(theme='dark')
+alt.renderers.set_embed_options(theme='light')
 
 url="https://raw.githubusercontent.com/felicyairenea/Snapchat-Project/main/data/IN-ADH-90-days.csv"
 df = pd.read_csv(open_url(url),parse_dates=["Date"])
@@ -43,7 +43,9 @@ g1 = alt.Chart(df_group).mark_line().encode(
         )
     )
 ).properties(
-    title = "Average Click Through Rate through Time per Ad Group"
+    title = "Average Click Through Rate through Time per Ad Group",
+    height = 300,
+    width = 600
 ).mark_line(interpolate="basis", color="#19615b"
 ).add_selection(highlight).interactive()
 
@@ -62,7 +64,9 @@ g2 = alt.Chart(df_group_2).mark_line().encode(
         )
     )
 ).properties(
-    title = "Average Click Through Rate through Time per GMOB's Ad Type"
+    title = "Average Click Through Rate through Time per GMOB's Ad Type",
+    height = 200,
+    width = 600
 ).transform_filter(
     alt.FieldOneOfPredicate(field='ad_group', oneOf=["gmob"])
 ).mark_line(interpolate="basis", color="#19615b").interactive()
@@ -79,7 +83,9 @@ g3 = alt.Chart(df_group_2).mark_line().encode(
         )
     )
 ).properties(
-    title = "Average Click Through Rate through Time per MGDN's Ad Type"
+    title = "Average Click Through Rate through Time per MGDN's Ad Type",
+    height = 200,
+    width = 600
 ).transform_filter(
     alt.FieldOneOfPredicate(field='ad_group', oneOf=["mgdn"])
 ).mark_line(interpolate="basis", color="#19615b").interactive()
@@ -96,7 +102,9 @@ g4 = alt.Chart(df_group_2).mark_line().encode(
         )
     )
 ).properties(
-    title = "Average Click Through Rate through Time per Youtube's Ad Type"
+    title = "Average Click Through Rate through Time per Youtube's Ad Type",
+    height = 200,
+    width = 600
 ).transform_filter(
     alt.FieldOneOfPredicate(field='ad_group', oneOf=["youtube"])
 ).mark_line(interpolate="basis", color="#19615b").interactive()
@@ -114,7 +122,9 @@ g5 = alt.Chart(df_group).mark_line().encode(
         )
     )
 ).properties(
-    title="Average Cost per Thousand Impressions through Time per Ad Group"
+    title="Average Cost per Thousand Impressions through Time per Ad Group",
+    height = 300,
+    width = 600
 ).mark_line(
     interpolate="basis", color="#19615b"
 ).interactive()
@@ -132,7 +142,9 @@ g6 = alt.Chart(df_group).mark_line().encode(
         )
     )
 ).properties(
-    title = "Average Conversion Rate through Time per Ad Group"
+    title = "Average Conversion Rate through Time per Ad Group",
+    height = 300,
+    width = 600
 ).mark_line(interpolate="basis", color="#19615b")
 
 # Conversion Rate Analysis per Ad Type
@@ -179,7 +191,9 @@ g9 = alt.Chart(df_group).mark_line().encode(
         )
     )
 ).properties(
-    title="Average Cost per Conversions through Time per Ad Group"
+    title="Average Cost per Conversions through Time per Ad Group",
+    height = 300,
+    width = 600
 ).mark_line(
     interpolate="basis", color="#19615b"
 ).interactive()
