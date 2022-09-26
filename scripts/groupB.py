@@ -23,11 +23,12 @@ df["ad_group"] = df.adgroup_name.apply(lambda x: x.split(":")[0])
 df["ad_type"] = df.adgroup_name.apply(lambda x: x.split(":")[1])
 
 df_group = df.groupby(["Date", "ad_group"]).mean().reset_index()
+df_group_2 = df.groupby(["Date", "ad_group","ad_type"]).mean().reset_index()
 
 alt.data_transformers.disable_max_rows()
 
-highlight= alt.selection(
-    type='single', on='mouseover', fields=['Date'], nearest=True)
+ad_radio = alt.binding_radio(options=['gmob', 'mgdn', 'youtube'], name='Ad Group')
+ad_selec = alt.selection_single(fields=['ad_group'], bind=ad_radio)
 
 # CTR Analysis per Ad Group
 g1 = alt.Chart(df_group).mark_line().encode(
@@ -39,18 +40,18 @@ g1 = alt.Chart(df_group).mark_line().encode(
     color=alt.Color(
         'ad_group:N',
         legend=alt.Legend(
-            title = 'Ad Group',
+            title = 'Ad Group', orient='bottom', titleOrient='right'
         )
     )
 ).properties(
     title = "Average Click Through Rate through Time per Ad Group",
-    height = 300,
-    width = 600
+    height = 200,
+    width = 250
 ).mark_line(interpolate="basis", color="#19615b"
-).add_selection(highlight).interactive()
+).add_selection(ad_selec
+).transform_filter(ad_selec).interactive()
 
 # CTR Analysis per Ad Type
-df_group_2 = df.groupby(["Date", "ad_group","ad_type"]).mean().reset_index()
 
 g2 = alt.Chart(df_group_2).mark_line().encode(
     alt.X('yearmonth(Date):T',
@@ -60,57 +61,22 @@ g2 = alt.Chart(df_group_2).mark_line().encode(
     color=alt.Color(
         'ad_type:N',
         legend=alt.Legend(
-            title = 'Ad Group',
+            title = 'Ad Group', orient='bottom', titleOrient='right'
         )
     )
 ).properties(
-    title = "Average Click Through Rate through Time per GMOB's Ad Type",
+    title = "Average Click Through Rate through Time per Ad Type",
     height = 200,
-    width = 600
+    width = 250
+).mark_line(
+    interpolate="basis", color="#19615b"
+).add_selection(
+    ad_selec
 ).transform_filter(
-    alt.FieldOneOfPredicate(field='ad_group', oneOf=["gmob"])
-).mark_line(interpolate="basis", color="#19615b").interactive()
-
-g3 = alt.Chart(df_group_2).mark_line().encode(
-    alt.X('yearmonth(Date):T',
-         axis = alt.Axis(title="Date")),
-    alt.Y('average(click_through_rate):Q',
-         axis = alt.Axis(title="Average Click Through Rate (CTR)")),
-    color=alt.Color(
-        'ad_type:N',
-        legend=alt.Legend(
-            title = 'Ad Group',
-        )
-    )
-).properties(
-    title = "Average Click Through Rate through Time per MGDN's Ad Type",
-    height = 200,
-    width = 600
-).transform_filter(
-    alt.FieldOneOfPredicate(field='ad_group', oneOf=["mgdn"])
-).mark_line(interpolate="basis", color="#19615b").interactive()
-
-g4 = alt.Chart(df_group_2).mark_line().encode(
-    alt.X('yearmonth(Date):T',
-         axis = alt.Axis(title="Date")),
-    alt.Y('average(click_through_rate):Q',
-         axis = alt.Axis(title="Average Click Through Rate (CTR)")),
-    color=alt.Color(
-        'ad_type:N',
-        legend=alt.Legend(
-            title = 'Ad Group',
-        )
-    )
-).properties(
-    title = "Average Click Through Rate through Time per Youtube's Ad Type",
-    height = 200,
-    width = 600
-).transform_filter(
-    alt.FieldOneOfPredicate(field='ad_group', oneOf=["youtube"])
-).mark_line(interpolate="basis", color="#19615b").interactive()
+    ad_selec).interactive()
 
 # CPM Analysis Per Ad Group
-g5 = alt.Chart(df_group).mark_line().encode(
+g3 = alt.Chart(df_group).mark_line().encode(
     alt.X('yearmonth(Date):T',
           axis = alt.Axis(title="Date")),
     alt.Y('average(cost_per_thousand_impressions):Q',
@@ -118,19 +84,46 @@ g5 = alt.Chart(df_group).mark_line().encode(
     color=alt.Color(
         'ad_group:N',
         legend=alt.Legend(
-            title = 'Ad Group'
+            title = 'Ad Group', orient='bottom', titleOrient='right'
         )
     )
 ).properties(
     title="Average Cost per Thousand Impressions through Time per Ad Group",
-    height = 300,
-    width = 600
+    height = 200,
+    width = 250
 ).mark_line(
     interpolate="basis", color="#19615b"
-).interactive()
+).add_selection(
+    ad_selec
+).transform_filter(
+    ad_selec).interactive()
+
+# CPM Analysis Per Ad Type
+g4 = alt.Chart(df_group_2).mark_line().encode(
+    alt.X('yearmonth(Date):T',
+         axis = alt.Axis(title="Date")),
+    alt.Y('average(cost_per_thousand_impressions):Q',
+         axis = alt.Axis(title="Average Cost per Thousand Impressions")),
+    color=alt.Color(
+        'ad_type:N',
+        legend=alt.Legend(
+            title = 'Ad Group', orient='bottom', titleOrient='right'
+        )
+    )
+).properties(
+    title = "Average Cost per Thousand Impressions per Ad Type",
+    height = 200,
+    width = 250
+).mark_line(
+    interpolate="basis", color="#19615b"
+).add_selection(
+    ad_selec
+).transform_filter(
+    ad_selec).interactive()
+
 
 # Conversion Rate Analysis per Ad Group
-g6 = alt.Chart(df_group).mark_line().encode(
+g5 = alt.Chart(df_group).mark_line().encode(
     alt.X('yearmonth(Date):T',
           axis = alt.Axis(title="Date")),
     alt.Y('average(conversion_rate):Q',
@@ -138,24 +131,29 @@ g6 = alt.Chart(df_group).mark_line().encode(
     color=alt.Color(
         'ad_group:N',
         legend=alt.Legend(
-            title = 'Ad Group',
+            title = 'Ad Group', orient='bottom', titleOrient='right'
         )
     )
 ).properties(
     title = "Average Conversion Rate through Time per Ad Group",
-    height = 300,
-    width = 600
-).mark_line(interpolate="basis", color="#19615b")
+    height = 200,
+    width = 250
+).mark_line(
+    interpolate="basis", color="#19615b"
+).add_selection(
+    ad_selec
+).transform_filter(
+    ad_selec).interactive()
 
 # Conversion Rate Analysis per Ad Type
-g7 = alt.Chart(df_group_2).mark_line().encode(
+g6 = alt.Chart(df_group_2).mark_line().encode(
     alt.X('yearmonth(Date):T',
           axis = alt.Axis(title="Date")),
     alt.Y('average(conversion_rate):Q',
          axis = alt.Axis(title="Average Conversion Rate")),
     color=alt.Color(
         'ad_type:N',
-        legend=alt.Legend(title = 'Ad Type')
+        title = 'Ad Group', orient='bottom', titleOrient='right'
     )
 ).properties(
     title = "Average Conversion Rate through Time per MGDN's Ad Type"
@@ -163,23 +161,8 @@ g7 = alt.Chart(df_group_2).mark_line().encode(
     alt.FieldOneOfPredicate(field='ad_group', oneOf=["mgdn"])
 ).mark_line(interpolate="basis", color="#19615b")
 
-g8 = alt.Chart(df_group_2).mark_line().encode(
-    alt.X('yearmonth(Date):T',
-          axis = alt.Axis(title="Date")),
-    alt.Y('average(conversion_rate):Q',
-         axis = alt.Axis(title="Average Conversion Rate")),
-    color=alt.Color(
-        'ad_type:N',
-        legend=alt.Legend(title = 'Ad Type')
-    )
-).properties(
-    title = "Average Conversion Rate through Time per Yooutube's Ad Type"
-).transform_filter(
-    alt.FieldOneOfPredicate(field='ad_group', oneOf=["youtube"])
-).mark_line(interpolate="basis", color="#19615b").interactive()
-
 # Cost Per Conversion Analysis
-g9 = alt.Chart(df_group).mark_line().encode(
+g7 = alt.Chart(df_group).mark_line().encode(
     alt.X('yearmonth(Date):T',
           axis = alt.Axis(title="Date")),
     alt.Y('average(cost_per_conversion):Q',
@@ -187,22 +170,25 @@ g9 = alt.Chart(df_group).mark_line().encode(
     color=alt.Color(
         'ad_group:N',
         legend=alt.Legend(
-            title = 'Ad Group'
+           title = 'Ad Group', orient='bottom', titleOrient='right'
         )
     )
 ).properties(
     title="Average Cost per Conversions through Time per Ad Group",
-    height = 300,
-    width = 600
+    height = 200,
+    width = 250
 ).mark_line(
     interpolate="basis", color="#19615b"
-).interactive()
+).add_selection(
+    ad_selec
+).transform_filter(
+    ad_selec).interactive()
 
 base = alt.Chart(df_group).encode(
     alt.X('yearmonth(date):T', axis=alt.Axis(title="Date"))
 )
 
 
-alt.vconcat(g1, g5)|alt.vconcat(g6, g9)
+alt.vconcat(g1, g3 ) | alt.vconcat(g2, g4) | alt.vconcat(g5, g7)
 
 
